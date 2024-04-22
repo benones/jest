@@ -43,18 +43,57 @@ function CreditCardForm() {
         cvv: ''
     });
 
+    const [errors, setErrors] = useState({
+        cardHolderName: '',
+        cardNumber: '',
+        expiryDate: '',
+        cvv: ''
+    });
+
     const handleChange = (event) => {
         const { name, value } = event.target;
+        let error = '';
+
+        // Validations
+        switch (name) {
+            case 'cardHolderName':
+                if (!/^[a-zA-Z\s]+$/.test(value)) {
+                    error = 'O nome do portador do cartão apenas deve conter letras constatadas no cartão.';
+                }
+                break;
+            case 'cardNumber':
+                if (!/^\d{16}$/.test(value)) {
+                    error = 'O número do cartão só pode ter até 16 dígitos, sendo estes números.';
+                }
+                break;
+            case 'expiryDate':
+                if (!/^\d{2}\/\d{2}$/.test(value)) {
+                    error = 'A data de expiração deve estar no futuro e formatada em MÊS/ANO.';
+                }
+                break;
+            case 'cvv':
+                if (!/^\d{3}$/.test(value)) {
+                    error = 'CVV deve ter 3 dígitos.';
+                }
+                break;
+            default:
+                break;
+        }
+
         setFormData(prevState => ({
             ...prevState,
             [name]: value
+        }));
+        setErrors(prevState => ({
+            ...prevState,
+            [name]: error
         }));
     };
 
     const handleSubmit = (event) => {
         event.preventDefault();
         console.log(formData);
-        alert('Form submitted. Check the console for data.');
+        alert('Formulário subiu com sucesso! Cheque os dados do programa.');
     };
 
     return (
@@ -70,6 +109,7 @@ function CreditCardForm() {
                     style={styles.input}
                     required
                 />
+                <div style={{ color: 'red' }}>{errors.cardHolderName}</div>
             </div>
             <div>
                 <label htmlFor="cardNumber" style={styles.label}>Card Number:</label>
@@ -82,6 +122,7 @@ function CreditCardForm() {
                     style={styles.input}
                     required
                 />
+                <div style={{ color: 'red' }}>{errors.cardNumber}</div>
             </div>
             <div>
                 <label htmlFor="expiryDate" style={styles.label}>Expiry Date:</label>
@@ -94,6 +135,7 @@ function CreditCardForm() {
                     style={styles.input}
                     required
                 />
+                <div style={{ color: 'red' }}>{errors.expiryDate}</div>
             </div>
             <div>
                 <label htmlFor="cvv" style={styles.label}>CVV:</label>
@@ -106,6 +148,7 @@ function CreditCardForm() {
                     style={styles.input}
                     required
                 />
+                <div style={{ color: 'red' }}>{errors.cvv}</div>
             </div>
             <button type="submit" style={styles.button}>Submit</button>
         </form>
